@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Hitung Mundur Tahun Baru</title>
+		<style>
+			body {
+				line-height: 1.5;
+			}
+
+			table {
+				text-align: left;
+				width: 100%;
+			}
+
+			table tr :is(th, td) {
+				padding: 4px 6px;
+			}
+
+			.container {
+				max-width: 520px;
+				margin: auto;
+				padding-inline: 24px;
+				padding-top: 12px;
+				padding-bottom: 36px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>
+				<center>Hitungan Mundur Tahun Baru <span id="__ny"></span></center>
+			</h1>
+			<table border="1">
+				<tr>
+					<th colspan="2" align="center">Hari Ini</th>
+				</tr>
+				<tr>
+					<th>Tanggal</th>
+					<td><time datetime="" id="__hi"></time></td>
+				</tr>
+				<tr>
+					<th>Jam</th>
+					<td id="__js"></td>
+				</tr>
+			</table>
+
+			<br />
+
+			<table border="1">
+				<tr>
+					<th colspan="2" align="center">Waktu Terlewati</th>
+				</tr>
+				<tr>
+					<th>Hari</th>
+					<td id="__ht"></td>
+				</tr>
+				<tr>
+					<th>Jam</th>
+					<td id="__jt"></td>
+				</tr>
+				<tr>
+					<th>Menit</th>
+					<td id="__mt"></td>
+				</tr>
+				<tr>
+					<th>Detik</th>
+					<td id="__dt"></td>
+				</tr>
+			</table>
+
+			<br />
+
+			<table border="1">
+				<tr>
+					<th colspan="2" align="center">Hitungan Mundur</th>
+				</tr>
+				<tr>
+					<th>Hari</th>
+					<td id="__hr"></td>
+				</tr>
+				<tr>
+					<th>Jam</th>
+					<td id="__jr"></td>
+				</tr>
+				<tr>
+					<th>Menit</th>
+					<td id="__mr"></td>
+				</tr>
+				<tr>
+					<th>Detik</th>
+					<td id="__dr"></td>
+				</tr>
+			</table>
+			<br />
+			<footer>
+				<center>
+					<a href="https://github.com/dhandhanggula" target="_blank">Github</a>
+				</center>
+			</footer>
+		</div>
+
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				const __ny = document.querySelector("#__ny"); // new year
+				const __hi = document.querySelector("#__hi"); // hari ini
+				const __js = document.querySelector("#__js"); // jam sekarang
+
+				const __waktu = {
+					__ht: document.querySelector("#__ht"), // hari  terlewati
+					__jt: document.querySelector("#__jt"), // jam   terlewati
+					__mt: document.querySelector("#__mt"), // menit terlewati
+					__dt: document.querySelector("#__dt"), // detik terlewati
+					__hr: document.querySelector("#__hr"), // hari  tersisa
+					__jr: document.querySelector("#__jr"), // jam   tersisa
+					__mr: document.querySelector("#__mr"), // menit tersisa
+					__dr: document.querySelector("#__dr"), // detik tersisa
+				};
+
+				const __bg = (__el, __p, __c) => {
+					__el.style.background = `linear-gradient(90deg, ${__c} ${__p}%, #fff ${__p}%)`;
+				};
+
+				setInterval(() => {
+					const now = new Date();
+					const nf = new Intl.NumberFormat("id-ID");
+
+					const __d = new Date();
+					const __nf = new Intl.NumberFormat("id-ID");
+					const __z = now.getTimezoneOffset();
+					const __tz = __z === -420 ? "WIB" : __z === -480 ? "WITA" : "WIT";
+					const __tb = new Date(__d.getFullYear() + 1, 0, 1); // waktu awal tahun selanjutnya
+					const __at = new Date(__d.getFullYear(), 0, 1); // waktu awal tahun
+					const __th = (__tb - __at) / (1000 * 60 * 60 * 24); // total hari
+					const __wt = __d - __at; // waktu terlewati
+					const __wr = __tb - __d;
+					const __wtotal = __tb - __at;
+
+					// atur konten untuk #__ny
+					__ny.textContent = __d.getFullYear() + 1;
+
+					// atur konten untuk #__hi
+					__hi.textContent = __d.toLocaleDateString("id-ID", {
+						weekday: "long",
+						day: "numeric",
+						month: "long",
+						year: "numeric",
+					});
+
+					// atur nilai datetime pada node #__hi
+					__hi.setAttribute("datetime", __d);
+
+					// atur nilai untuk #__js
+					__js.textContent = `${now.toLocaleTimeString("id-ID", {
+						hour: "numeric",
+						minute: "numeric",
+						second: "numeric",
+					})} ${__tz}`;
+
+					/**
+					 * * rumus untuk menghitung unit waktu
+					 * * __h : hari
+					 * * __j : jam
+					 * * __m : menit
+					 * * __d : detik
+					 * */
+					const __ut = [
+						{ type: "__h", f: 1000 * 60 * 60 * 24 }, // hari
+						{ type: "__j", f: 1000 * 60 * 60 }, // jam
+						{ type: "__m", f: 1000 * 60 }, // menit
+						{ type: "__d", f: 1000 }, // detik
+					];
+
+					// label waktu
+					const __ll = { __h: "Hari", __j: "Jam", __m: "Menit", __d: "Detik" };
+
+					// background color untuk kolom waktu
+					const __bc = {
+						__h: "powderblue",
+						__j: "palegreen",
+						__m: "antiquewhite",
+						__d: "lemonchiffon",
+					};
+
+					__ut.forEach(({ type, f }) => {
+						const __t = Math.floor(__wt / f); // waktu terlewati
+						const __r =
+							Math.floor(__wr / f) %
+							(type === "__h" ? Infinity : type === "__j" ? 24 : 60); // waktu tersisa
+
+						const __total = Math.floor(__wtotal / f);
+
+						const __tf = `${nf.format(__t)} ${__ll[type]}`; // format hasil waktu terlewati
+						const __rf = `${nf.format(__r)} ${__ll[type]}`; // format hasil waktu tersisa
+
+						// atur kontent untuk tiap satuan waktu pada waktu terlewati
+						__waktu[`${type}t`].textContent = __tf;
+
+						// atur kontent untuk tiap satuan waktu pada waktu tersisa
+						__waktu[`${type}r`].textContent = __rf;
+
+						// atur background untuk tiap satuan waktu pada waktu terlewati
+						__bg(__waktu[`${type}t`], (__t / __total) * 100, __bc[type]);
+
+						// atur background untuk tiap satu waktu pada waktu tersisa
+						__bg(
+							__waktu[`${type}r`],
+							(__r / (type == "__h" ? __total : 60)) * 100,
+							__bc[type]
+						);
+					});
+				}, 1000);
+			});
+		</script>
+	</body>
+</html>
