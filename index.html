@@ -1,217 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hitung Mundur Tahun Baru</title>
-		<style>
-			body {
-				line-height: 1.5;
-			}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NYCD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap");
 
-			table {
-				text-align: left;
-				width: 100%;
-			}
+      body {
+      	font-family: "Geist Mono";
+      }
+    </style>
+  </head>
+  <body class="bg-neutral-900 snap-y snap-mandatory">
+    <div
+      class="snap-always snap-start w-screen h-screen flex flex-row items-center justify-center overflow-hidden"
+    >
+      <div class="w-full lg:w-5/12 mx-auto px-8">
+        <div class="w-full mx-auto h-12 bg-neutral-700 block rounded-sm mb-3">
+          <div
+            class="h-12 bg-green-500 rounded-sm flex flex-row items-center justify-end px-6"
+            id="percentage-bar"
+          >
+            <span
+              class="text-lg font-semibold text-green-950"
+              id="percentage-value"
+              >0%</span
+            >
+          </div>
+        </div>
+        <div class="text-neutral-500 flex flex-row items-center gap-x-3">
+          <span id="year-now">0000</span> <span>-></span>
+          <span id="year-next">0000</span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="snap-always snap-start w-screen h-screen flex flex-row items-center justify-center overflow-hidden px-8"
+    >
+      <p class="text-neutral-200 leading-relaxed text-lg">
+        <span id="days">000</span> days or <span id="hours">0.000</span> hours
+        or <span id="minutes">000.000</span> minutes or
+        <span id="seconds">00.000.000</span> seconds have passed this year.
+      </p>
+    </div>
+    <div
+      class="snap-always snap-start w-screen h-screen flex flex-row items-center justify-center overflow-hidden px-8"
+    >
+      <p class="text-neutral-200 leading-relaxed text-lg">
+        Just <span id="days-rem">000</span> days,
+        <span id="hours-rem">0.000</span> hours,
+        <span id="minutes-rem">000.000</span> minutes and
+        <span id="seconds-rem">00.000.000</span> seconds left until we welcome
+        the new year!
+      </p>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+      	setInterval(() => {
+      		const nowEl = document.querySelector("#year-now");
+      		const nextEl = document.querySelector("#year-next");
+      		const barEl = document.querySelector("#percentage-bar");
+      		const barvEl = document.querySelector("#percentage-value");
+      		const elps_el = {
+      			days: document.querySelector("#days"),
+      			hours: document.querySelector("#hours"),
+      			minutes: document.querySelector("#minutes"),
+      			seconds: document.querySelector("#seconds"),
+      		};
+      		const rems_el = {
+      			days: document.querySelector("#days-rem"),
+      			hours: document.querySelector("#hours-rem"),
+      			minutes: document.querySelector("#minutes-rem"),
+      			seconds: document.querySelector("#seconds-rem"),
+      		};
 
-			table tr :is(th, td) {
-				padding: 4px 6px;
-			}
+      		const now = new Date();
+      		const start = new Date(now.getFullYear(), 0, 1);
+      		const next = new Date(now.getFullYear() + 1, 0, 1);
+      		const total = next - start;
+      		const elapsed = now - start;
+      		const remains = next - now;
+      		const percentage = (elapsed / total) * 100;
+      		const nf = new Intl.NumberFormat("id-ID");
+      		const elps_calc = {
+      			days: elapsed / (1000 * 60 * 60 * 24),
+      			hours: elapsed / (1000 * 60 * 60),
+      			minutes: elapsed / (1000 * 60),
+      			seconds: elapsed / 1000,
+      		};
+      		const rems_calc = {
+      			days: remains / (1000 * 60 * 60 * 24),
+      			hours: (remains % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+      			minutes: (remains % (1000 * 60 * 60)) / (1000 * 60),
+      			seconds: (remains % (1000 * 60)) / 1000,
+      		};
 
-			.container {
-				max-width: 520px;
-				margin: auto;
-				padding-inline: 24px;
-				padding-top: 12px;
-				padding-bottom: 36px;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container">
-			<h1>
-				<center>Hitungan Mundur Tahun Baru <span id="__ny"></span></center>
-			</h1>
-			<table border="1">
-				<tr>
-					<th colspan="2" align="center">Hari Ini</th>
-				</tr>
-				<tr>
-					<th>Tanggal</th>
-					<td><time datetime="" id="__hi"></time></td>
-				</tr>
-				<tr>
-					<th>Jam</th>
-					<td id="__js"></td>
-				</tr>
-			</table>
+      		nowEl.textContent = now.getFullYear();
+      		nextEl.textContent = next.getFullYear();
+      		barEl.style.width = `${percentage}%`;
+      		barvEl.textContent = `${percentage.toFixed(2)}%`;
+      		Object.keys(elps_el).map((key) => {
+      			elps_el[key].classList.add("text-green-500");
+      			rems_el[key].classList.add("text-green-500");
 
-			<br />
-
-			<table border="1">
-				<tr>
-					<th colspan="2" align="center">Waktu Terlewati</th>
-				</tr>
-				<tr>
-					<th>Hari</th>
-					<td id="__ht"></td>
-				</tr>
-				<tr>
-					<th>Jam</th>
-					<td id="__jt"></td>
-				</tr>
-				<tr>
-					<th>Menit</th>
-					<td id="__mt"></td>
-				</tr>
-				<tr>
-					<th>Detik</th>
-					<td id="__dt"></td>
-				</tr>
-			</table>
-
-			<br />
-
-			<table border="1">
-				<tr>
-					<th colspan="2" align="center">Hitungan Mundur</th>
-				</tr>
-				<tr>
-					<th>Hari</th>
-					<td id="__hr"></td>
-				</tr>
-				<tr>
-					<th>Jam</th>
-					<td id="__jr"></td>
-				</tr>
-				<tr>
-					<th>Menit</th>
-					<td id="__mr"></td>
-				</tr>
-				<tr>
-					<th>Detik</th>
-					<td id="__dr"></td>
-				</tr>
-			</table>
-			<br />
-			<footer>
-				<center>
-					<a href="https://github.com/dhandhanggula" target="_blank">Github</a>
-				</center>
-			</footer>
-		</div>
-
-		<script>
-			document.addEventListener("DOMContentLoaded", function () {
-				const __ny = document.querySelector("#__ny"); // new year
-				const __hi = document.querySelector("#__hi"); // hari ini
-				const __js = document.querySelector("#__js"); // jam sekarang
-
-				const __waktu = {
-					__ht: document.querySelector("#__ht"), // hari  terlewati
-					__jt: document.querySelector("#__jt"), // jam   terlewati
-					__mt: document.querySelector("#__mt"), // menit terlewati
-					__dt: document.querySelector("#__dt"), // detik terlewati
-					__hr: document.querySelector("#__hr"), // hari  tersisa
-					__jr: document.querySelector("#__jr"), // jam   tersisa
-					__mr: document.querySelector("#__mr"), // menit tersisa
-					__dr: document.querySelector("#__dr"), // detik tersisa
-				};
-
-				const __bg = (__el, __p, __c) => {
-					__el.style.background = `linear-gradient(90deg, ${__c} ${__p}%, #fff ${__p}%)`;
-				};
-
-				setInterval(() => {
-					const now = new Date();
-					const nf = new Intl.NumberFormat("id-ID");
-
-					const __d = new Date();
-					const __nf = new Intl.NumberFormat("id-ID");
-					const __z = now.getTimezoneOffset();
-					const __tz = __z === -420 ? "WIB" : __z === -480 ? "WITA" : "WIT";
-					const __tb = new Date(__d.getFullYear() + 1, 0, 1); // waktu awal tahun selanjutnya
-					const __at = new Date(__d.getFullYear(), 0, 1); // waktu awal tahun
-					const __th = (__tb - __at) / (1000 * 60 * 60 * 24); // total hari
-					const __wt = __d - __at; // waktu terlewati
-					const __wr = __tb - __d;
-					const __wtotal = __tb - __at;
-
-					// atur konten untuk #__ny
-					__ny.textContent = __d.getFullYear() + 1;
-
-					// atur konten untuk #__hi
-					__hi.textContent = __d.toLocaleDateString("id-ID", {
-						weekday: "long",
-						day: "numeric",
-						month: "long",
-						year: "numeric",
-					});
-
-					// atur nilai datetime pada node #__hi
-					__hi.setAttribute("datetime", __d);
-
-					// atur nilai untuk #__js
-					__js.textContent = `${now.toLocaleTimeString("id-ID", {
-						hour: "numeric",
-						minute: "numeric",
-						second: "numeric",
-					})} ${__tz}`;
-
-					/**
-					 * * rumus untuk menghitung unit waktu
-					 * * __h : hari
-					 * * __j : jam
-					 * * __m : menit
-					 * * __d : detik
-					 * */
-					const __ut = [
-						{ type: "__h", f: 1000 * 60 * 60 * 24 }, // hari
-						{ type: "__j", f: 1000 * 60 * 60 }, // jam
-						{ type: "__m", f: 1000 * 60 }, // menit
-						{ type: "__d", f: 1000 }, // detik
-					];
-
-					// label waktu
-					const __ll = { __h: "Hari", __j: "Jam", __m: "Menit", __d: "Detik" };
-
-					// background color untuk kolom waktu
-					const __bc = {
-						__h: "powderblue",
-						__j: "palegreen",
-						__m: "antiquewhite",
-						__d: "lemonchiffon",
-					};
-
-					__ut.forEach(({ type, f }) => {
-						const __t = Math.floor(__wt / f); // waktu terlewati
-						const __r =
-							Math.floor(__wr / f) %
-							(type === "__h" ? Infinity : type === "__j" ? 24 : 60); // waktu tersisa
-
-						const __total = Math.floor(__wtotal / f);
-
-						const __tf = `${nf.format(__t)} ${__ll[type]}`; // format hasil waktu terlewati
-						const __rf = `${nf.format(__r)} ${__ll[type]}`; // format hasil waktu tersisa
-
-						// atur kontent untuk tiap satuan waktu pada waktu terlewati
-						__waktu[`${type}t`].textContent = __tf;
-
-						// atur kontent untuk tiap satuan waktu pada waktu tersisa
-						__waktu[`${type}r`].textContent = __rf;
-
-						// atur background untuk tiap satuan waktu pada waktu terlewati
-						__bg(__waktu[`${type}t`], (__t / __total) * 100, __bc[type]);
-
-						// atur background untuk tiap satu waktu pada waktu tersisa
-						__bg(
-							__waktu[`${type}r`],
-							(__r / (type == "__h" ? __total : 60)) * 100,
-							__bc[type]
-						);
-					});
-				}, 1000);
-			});
-		</script>
-	</body>
+      			elps_el[key].textContent = `${nf.format(
+      				Math.floor(elps_calc[key])
+      			)}`;
+      			rems_el[key].textContent = `${nf.format(
+      				Math.floor(rems_calc[key])
+      			)}`;
+      		});
+      	}, 1000);
+      });
+    </script>
+  </body>
 </html>
